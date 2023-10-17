@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">HAVE-IT</string>
+
+    <!-- Login Screen -->
+    <string name="login_email">이메일</string>
+    <string name="login_password">비밀번호</string>
+    <string name="login_normal_login_button_text">로그인</string>
+    <string name="login_or">혹은</string>
+    <string name="login_kakao_login_button_text">카카오톡으로 로그인하기</string>
+    <string name="login_no_account_button_text">계정이 없으신가요?</string>
+
+    <string name="login_domain_input_direct">직접 입력</string>
+    <string name="login_empty_warning">모든 입력값을 입력해주세요!</string>
+
+    <string name="statistic_calorie">칼로리 소모량</string>
+
+    <!-- Initial Setting Screen -->
+    <string name="initial_setting_title">목표를 설정하세요!</string>
+    <string name="initial_setting_calorie_goal">목표 칼로리 소모</string>
+    <string name="initial_setting_sleep_goal">목표 수면 시간</string>
+    <string name="inital_setting_free_goal_description">목표를 입력해주세요.</string>
+    <string name="initial_setting_ok_button_text">시작하기</string>
+
+    <!-- Home Screen -->
+    <string name="home_cal_mission_text">%s Kcal 태웠어요!</string>
+    <string name="home_sleep_mission_text">%s 시간 %s 분 수면</string>
+    <string name="home_get_coin_button_text">체크하고 코인 받기</string>
+    <string name="home_get_pet_reward_text">체크하고 특별펫 이용권 받기</string>
+    <string name="home_already_coin_achieved">이미 코인을 수령했습니다!</string>
+    <string name="home_already_pet_reward_achieved">이미 보상을 수령했습니다!</string>
+    <string name="home_not_achieved">아직 달성되지 않았습니다!</string>
+    <string name="home_bottom_sheet_calorie_title">오늘 불태운 칼로리</string>
+    <string name="home_bottom_sheet_sleep_title">오늘 잠잔 시간</string>
+    <string name="home_bottom_sheet_free_title">자유미션:</string>
+    <string name="home_bottom_sheet_kcal">Kcal</string>
+    <string name="home_bottom_sheet_hour">시간</string>
+    <string name="home_bottom_sheet_min">분</string>
+    <string name="home_bottom_sheet_card_hour">%s시간</string>
+    <string name="home_bottom_sheet_card_min">%s분</string>
+    <string name="home_bottom_sheet_sleep_awake">수면중 깸</string>
+    <string name="home_bottom_sheet_sleep_rem">렘 수면</string>
+    <string name="home_bottom_sheet_sleep_light">얕은 수면</string>
+    <string name="home_bottom_sheet_sleep_deep">깊은 수면</string>
+    <string name="home_bottom_sheet_free_check_if_you_done">달성 완료 하셨다면 체크!</string>
+    <string name="home_permission_not_allow">권한 허용이 필요합니다</string>
+    <string name="home_error">에러가 발생했습니다.\n다시 시도해주세요.</string>
+
+    <!-- Setting Screen -->
+    <string name="setting_modify_user_info">내 정보 수정</string>
+    <string name="setting_user_weight">체중</string>
+    <string name="setting_user_weight_value">%s kg</string>
+    <string name="setting_user_dark">다크서클</string>
+    <string name="setting_user_dark_percent">%s%</string>
+    <string name="setting_modifiy_mission">미션 수정하기</string>
+    <string name="setting_challenge_to_step_achive">걷기왕에 도전하기!</string>
+    <string name="setting_logout">로그아웃</string>
+    <string name="setting_withdraw">탈퇴하기</string>
+    <string name="setting_member_info_err">유저 정보 조회에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="setting_stat_err">스탯 조회에 실패했습니다. 다시 시도해주세요</string>
+</resources>

@@ -1,0 +1,212 @@
+package com.habit.service
+
+
+import android.content.ContentValues.TAG
+import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.health.services.client.data.ExerciseState
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.habit.data.ExerciseClientManager
+import com.habit.data.isExerciseInProgress
+import com.habit.data.model.HabitExerciseType
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.time.Duration
+import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
+
+
+@AndroidEntryPoint
+class ExerciseService : LifecycleService() {
+
+    @Inject
+    lateinit var exerciseClientManager: ExerciseClientManager
+
+    @Inject
+    lateinit var exerciseNotificationManager: ExerciseNotificationManager
+
+    @Inject
+    lateinit var exerciseServiceMonitor: ExerciseServiceMonitor
+
+    private var isBound = false
+    private var isStarted = false
+    private val localBinder = LocalBinder()
+
+    private val serviceRunningInForeground: Boolean
+        @RequiresApi(Build.VERSION_CODES.Q)
+        get() = this.foregroundServiceType != ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
+
+    private suspend fun isExerciseInProgress() =
+        exerciseClientManager.exerciseClient.isExerciseInProgress()
+
+    /**
+     * Prepare exercise in this service's coroutine context.
+     */
+    suspend fun prepareExercise() {
+        exerciseClientManager.prepareExercise()
+    }
+
+    /**
+     * Start exercise in this service's coroutine context.
+     */
+    @RequiresApi(Build.VERSION_CODES.Q)
+    suspend fun startExercise(exercise: HabitExerciseType) {
+        postOngoingActivityNotification()
+        exerciseClientManager.startExercise(exercise)
+    }
+
+    /**
+     * Pause exercise in this service's coroutine context.
+     */
+    suspend fun pauseExercise() {
+        exerciseClientManager.pauseExercise()
+    }
+
+    /**
+     * Resume exercise in this service's coroutine context.
+     */
+    suspend fun resumeExercise() {
+        exerciseClientManager.resumeExercise()
+    }
+
+    /**
+     * End exercise in this service's coroutine context.
+     */
+    @RequiresApi(Build.VERSION_CODES.Q)
+    suspend fun endExercise() {
+        exerciseClientManager.endExercise()
+        removeOngoingActivityNotification()
+    }
+
+    /** Wear OS 3.0 reserves two buttons for the OS. For devices with more than 2 buttons,
+     * consider implementing a "press" to mark lap feature**/
+    fun markLap() {
+        lifecycleScope.launch {
+            exerciseClientManager.markLap()
+        }
+    }
+
+    //운동이 시작되었을때
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+
+        Log.d(TAG, "onStartCommand")
+
+        if (!isStarted) {
+            isStarted = true
+
+            if (!isBound) {
+                // 시스템에 의하여 재가동될수있다. 그에 따라 라이프사이클을 관리해야된다.
+                stopSelfIfNotRunning()
+            }
+            // 운동 정보 모으는것이 시작된다. 짧게 중단될 수도 있음,
+            // 그 경우 launchWhenStarted가 이 코루틴의 취소를 처리한다
+            lifecycleScope.launch(Dispatchers.Default) {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    exerciseServiceMonitor.monitor()
+                }
+            }
+        }
+        // If our process is stopped, we might have an active exercise. We want the system to
+        // recreate our service so that we can present the ongoing notification in that case.
+        return START_STICKY
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun stopSelfIfNotRunning() {
+        lifecycleScope.launch {
+            // We may have been restarted by the system. Check for an ongoing exercise.
+            if (!isExerciseInProgress()) {
+                // Need to cancel [prepareExercise()] to prevent battery drain.
+                if (exerciseServiceMonitor.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
+                    lifecycleScope.launch {
+                        endExercise()
+                    }
+                }
+                // We have nothing to do, so we can stop.
+                stopSelf()
+            }
+        }
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
+
+        handleBind()
+
+        return localBinder
+    }
+
+    override fun onRebind(intent: Intent?) {
+        super.onRebind(intent)
+
+        handleBind()
+    }
+
+    private fun handleBind() {
+        if (!isBound) {
+            isBound = true
+            // Start ourself. This will begin collecting exercise state if we aren't already.
+            startService(Intent(this, this::class.java))
+        }
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        isBound = false
+        lifecycleScope.launch {
+            // Client can unbind because it went through a configuration change, in which case it
+            // will be recreated and bind again shortly. Wait a few seconds, and if still not bound,
+            // manage our lifetime accordingly.
+            delay(UNBIND_DELAY)
+            if (!isBound) {
+                stopSelfIfNotRunning()
+            }
+        }
+        // Allow clients to re-bind. We will be informed of this in onRebind().
+        return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun removeOngoingActivityNotification() {
+        if (serviceRunningInForeground) {
+            Log.d(TAG, "Removing ongoing activity notification")
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun postOngoingActivityNotification() {
+        if (!serviceRunningInForeground) {
+            Log.d(TAG, "Posting ongoing activity notification")
+
+            exerciseNotificationManager.createNotificationChannel()
+            val serviceState = exerciseServiceMonitor.exerciseServiceState.value
+            startForeground(
+                ExerciseNotificationManager.NOTIFICATION_ID,
+                exerciseNotificationManager.buildNotification(
+                    serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
+                )
+            )
+        }
+    }
+
+    /** Local clients will use this to access the service. */
+    inner class LocalBinder : Binder() {
+        fun getService() = this@ExerciseService
+    }
+
+    companion object {
+        private val UNBIND_DELAY = 3.seconds
+    }
+}

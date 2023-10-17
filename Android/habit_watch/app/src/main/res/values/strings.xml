@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">HabitWatch</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">From the Square world,\nHello, %1$s!</string>
+    <string name="tile_label">Example tile</string>
+    <string name="title_activity_presentation._main">presentation.MainActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="complication_label">Example complication</string>
+
+    <!-- Select Exercise Screen -->
+    <string name="select_exercise_title">운동을 선택하세요!</string>
+    <string name="select_exercise_need_permission">모든 권한 \n허락이 필요합니다!</string>
+    <string name="select_exercise_go_to_permission">권한 허용하기</string>
+    <string name="select_exercise_maintainance">앱 정기 점검으로 운동 불가 시간입니다\n3시 이후로 운동이 가능합니다</string>
+
+    <!-- Start Exercise Screen -->
+    <string name="start_exercise_title">선택 운동</string>
+    <string name="start_exercise_button_description">운동 시작</string>
+
+    <!-- Exercise Screen -->
+    <string name="exercise_stop_button_description">운동 종료</string>
+
+    <!-- Exercise Ended Screen -->
+    <string name="exercise_summary_title">최고예요!</string>
+    <string name="exercise_summary_total_calorie">총 소모</string>
+    <string name="exercise_summary_total_time">총 시간</string>
+    <string name="exercise_summary_save_button_text">소모 칼로리 저장</string>
+    <string name="exercise_summary_maintainance">앱 정기 점검으로 운동 불가 시간입니다\n3시 이후로 운동이 가능합니다</string>
+    <string name="exercise_summary_need_connect">폰과의 연결이 필요합니다\n연결 후 아래 버튼 눌러주세요</string>
+    <string name="exercise_summary_refresh">새로고침</string>
+
+    <!-- NotAvailable Screen -->
+    <string name="not_avail">이 기기에서 사용 불가능한 운동입니다!</string>
+
+    <string name="waiting">Waiting for data to arrive\u2026</string>
+    <string name="query_other_devices">Query for other devices</string>
+    <string name="query_mobile_camera">Query for mobile camera</string>
+    <string name="no_device">No device provides the requested capabilities</string>
+    <string name="connected_nodes">Nodes: %1$s</string>
+    <string name="message">Message</string>
+    <string name="capability_changed">Capability changed</string>
+    <string name="photo_placeholder">Photo placeholder</string>
+    <string name="captured_photo">Captured photo</string>
+    <string name="data_item_changed">DataItem changed</string>
+    <string name="data_item_deleted">DataItem deleted</string>
+    <string name="data_item_unknown">Unknown DataItem type</string>
+</resources>

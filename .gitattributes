@@ -1,0 +1,2 @@
+/Unity/** filter=lfs diff=lfs merge=lfs -text
+/WebClient/** filter=lfs diff=lfs merge=lfs -text

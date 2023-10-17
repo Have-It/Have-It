@@ -1,0 +1,61 @@
+server:
+  port: 8013
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://j9d201.p.ssafy.io:8761/eureka
+
+
+spring:
+  application:
+    name: mission
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/mission?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://j9d201.p.ssafy.io:3306/mission?serverTimezone=Asia/Seoul
+    username: root
+#    password: ENC(0CubD7jkdnSKC4Yv2P7QCA==)
+    password: ENC(1M5lYX7dirKF8nbCQIC4TFDM/wy8WlnM)
+
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    #      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+  redis:
+#    host: ENC(cLuL/8Yyh4r2ZIcmYoan3gYdVLD+pEkd)
+    host: j9d201.p.ssafy.io
+    port: 6379
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+trace: true
+
+jwt:
+  secret: ENC(PGC8tzpAs03EJrT/Ztn0B40bxy5fUsOohCIobEEaoedo+9yqI9dhrMN6VKN3rr5II7+bcLcYJTM=)
+
+springdoc:
+  api-docs:
+    path: /mission-service/v3/api-docs
+  swagger-ui:
+    path: /mission-service/swagger-ui.html
+
+openapi:
+  service:
+#    url: http://192.168.100.117:8000/
+#    url: http://localhost:8000/
+    url: http://j9d201.p.ssafy.io:8000/
+
+jasypt:
+  encryptor:
+    password: ${PASSWORD}

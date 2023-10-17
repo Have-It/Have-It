@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Habit" parent="android:Theme.Material.Light.NoActionBar" />
+<!--    <style name="Theme.Dahaeng.Splash" parent="Theme.SplashScreen">-->
+<!--        <item name="windowSplashScreenBackground">@color/white</item>-->
+<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/i</item>-->
+<!--        <item name="postSplashScreenTheme">@style/Theme.Dahaeng</item>-->
+
+<!--        <item name="android:statusBarColor">@color/white</item>-->
+<!--        <item name="android:navigationBarColor">@color/white</item>-->
+<!--        <item name="android:windowLightStatusBar">true</item>-->
+<!--    </style>-->
+</resources>

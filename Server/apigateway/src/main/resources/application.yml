@@ -1,0 +1,169 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://j9d201.p.ssafy.io:8761/eureka
+#      defaultZone: http://localhost:8761/eureka
+
+
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - 'http://192.168.100.156:3000'
+              - 'http://192.168.100.172:3000'
+              - 'http://j9d201.p.ssafy.io:3000'
+              - 'https://j9d201.p.ssafy.io'
+              - 'http://localhost:3000'
+              - 'https://localhost:3000'
+            allow-credentials: true
+            allowedHeaders:
+              - x-requested-with
+              - Authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            exposedHeaders:
+              - x-requested-with
+              - Authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+      routes:
+        - id: member
+          uri: lb://MEMBER
+          predicates:
+            - Path=/member/update/**, /member/logout, /member/info, /member/delete, /member/home, /member/setting
+            - Method=GET,POST,PUT,DELETE
+          filters:
+            - AuthenticationHeaderFilter
+        - id: member
+          uri: lb://MEMBER
+          predicates:
+            - Path=/member/**
+        - id: member-service
+          uri: lb://MEMBER
+          predicates:
+            - Path=/member-service/**
+        - id: data
+          uri: lb://DATA
+          predicates:
+            - Path=/data/**, /success/**
+          filters:
+            - AuthenticationHeaderFilter
+        - id: data
+          uri: lb://DATA
+          predicates:
+            - Path= /rankdata1
+        - id: data-service
+          uri: lb://DATA
+          predicates:
+            - Path=/data-service/**
+        - id: mission
+          uri: lb://MISSION
+          predicates:
+            - Path= /mission/**
+          filters:
+            - AuthenticationHeaderFilter
+        - id: mission
+          uri: lb://MISSION
+          predicates:
+            - Path= /rankdata/**
+        - id: mission-service
+          uri: lb://MISSION
+          predicates:
+            - Path=/mission-service/**
+        - id: store
+          uri: lb://STORE
+          predicates:
+            - Path= /store/**
+          filters:
+            - AuthenticationHeaderFilter
+        - id: store
+          uri: lb://STORE
+          predicates:
+            - Path= /regist/**
+        - id: store-service
+          uri: lb://STORE
+          predicates:
+            - Path=/store-service/**
+        - id: character
+          uri: lb://CHARACTER
+          predicates:
+            - Path= /character/**, /buy/**
+          filters:
+            - AuthenticationHeaderFilter
+        - id: character
+          uri: lb://CHARACTER
+          predicates:
+            - Path= /rank/**
+        - id: character-service
+          uri: lb://CHARACTER
+          predicates:
+            - Path=/character-service/**
+        - id: game
+          uri: lb://GAME
+          predicates:
+            - Path= /game/**
+        - id: game-service
+          uri: lb://GAME
+          predicates:
+            - Path=/game-service/**
+
+  redis:
+#    host: ENC(cLuL/8Yyh4r2ZIcmYoan3gYdVLD+pEkd)
+    host: j9d201.p.ssafy.io
+    port: 6379
+
+jwt:
+  secret: ENC(PGC8tzpAs03EJrT/Ztn0B40bxy5fUsOohCIobEEaoedo+9yqI9dhrMN6VKN3rr5II7+bcLcYJTM=)
+
+trace: true
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      #      - url: /v3/api-docs
+      #        name: API Gateway Service
+      #        primaryName: API Gateway Service
+      - url: /member-service/v3/api-docs
+        name: Member
+      - url: /data-service/v3/api-docs
+        name: Data
+      - url: /mission-service/v3/api-docs
+        name: Mission
+      - url: /store-service/v3/api-docs
+        name: Store
+      - url: /character-service/v3/api-docs
+        name: Character
+      - url: /game-service/v3/api-docs
+        name: Game
+
+jasypt:
+  encryptor:
+    password: ${PASSWORD}
